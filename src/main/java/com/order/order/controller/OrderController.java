@@ -49,4 +49,6 @@ public class OrderController {
         OrderResponseDto order = orderService.updateOrder(code, orderRequestDto);
         return ResponseEntity.ok(order);
     }
+
+    //비동기 api 추후 구현
 }
