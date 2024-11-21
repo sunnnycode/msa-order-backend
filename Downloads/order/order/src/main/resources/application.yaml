@@ -1,0 +1,22 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ORDER
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://192.168.0.71:8088/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ORDER:8082  # 고정 값으로 설정
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+  resources:
+    static-locations: classpath:/static/
+    # 정적 리소스를 명시적으로 설정하고, API 경로와 충돌하지 않도록 조정
