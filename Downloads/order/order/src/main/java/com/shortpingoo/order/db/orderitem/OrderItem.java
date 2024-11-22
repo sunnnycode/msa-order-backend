@@ -1,5 +1,6 @@
 package com.shortpingoo.order.db.orderitem;
 
+import com.shortpingoo.order.db.order.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,13 +16,14 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
-    @Column(name = "order_code")
-    private Integer orderCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_code", nullable = false)
+    private Order order;
 
-    @Column(name = "cart_item_code")
-    private Integer cartItemCode;
+    @Column(name = "product_code", nullable = false)
+    private int productCode;
 
     @Column(name = "amount", nullable = false)
     private Integer amount;

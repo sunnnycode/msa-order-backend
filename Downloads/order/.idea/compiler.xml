@@ -10,9 +10,8 @@
         <module name="order.order.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="order.order.main~1" target="21" />
-      <module name="order.order.test~1" target="21" />
-    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
   </component>
 </project>
