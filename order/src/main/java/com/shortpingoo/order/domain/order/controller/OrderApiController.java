@@ -1,5 +1,6 @@
 package com.shortpingoo.order.domain.order.controller;
 
+import com.shortpingoo.order.domain.order.dto.OrderAllResponse;
 import com.shortpingoo.order.domain.order.dto.OrderRequest;
 import com.shortpingoo.order.domain.order.dto.OrderResponse;
 import com.shortpingoo.order.domain.order.service.OrderService;
@@ -28,11 +29,11 @@ public class OrderApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 
-    // 가게별 주문 전체 내역 조회
+//    // 가게별 주문 전체 내역 조회
 //    @GetMapping("/{storeId}")
 //    public ResponseEntity<List<OrderResponse>> getOrderByStoreId(
 //            @RequestHeader("X-User-Id") int userId,
-//            @PathVariable int storeId) {
+//            @PathVariable("storeId") int storeId) {
 //        OrderResponse orderResponse = orderService.getOrderByStoreId(storeId);
 //        if (orderResponse != null) {
 //            return ResponseEntity.ok(orderResponse);
@@ -41,14 +42,14 @@ public class OrderApiController {
 //        }
 //    }
 
-//    // 주문 건 별 상세 내역 조회
-//    @GetMapping("/{orderCode}")
-//    public ResponseEntity<OrderResponse> getOrderDetails(
-//            @PathVariable int orderCode,
-//            @RequestHeader("X-User-Id") int userId) {
-//        OrderResponse orderResponse = orderService.getOrderDetails(orderCode, userId);
-//        return ResponseEntity.ok(orderResponse);
-//    }
+    // 사용자(Client)의 본인 주문 전체 내역 조회
+    @GetMapping("/client")
+    public ResponseEntity<List<OrderAllResponse>> getOrderDetails(
+            @RequestHeader("X-User-Id") int userId) {
+        List<OrderAllResponse> orderAllResponse = orderService.getOrderDetails(userId);
+        return ResponseEntity.ok(orderAllResponse);
+    }
+
 
 
 

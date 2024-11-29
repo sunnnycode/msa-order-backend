@@ -26,7 +26,7 @@ public class OrderItem {
     private int productCode;
 
     @Column(name = "amount", nullable = false)
-    private Integer amount;
+    private int amount;
 
     @Column(name = "clothes_size", length = 20)
     private String clothesSize;
