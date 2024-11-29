@@ -18,15 +18,38 @@ public class OrderApiController {
 
     private final OrderService orderService;
 
-    @PostMapping("/{storeId}")
+    // 주문 생성
+    @PostMapping("")
     public ResponseEntity<List<OrderResponse>> createOrder(
-            @PathVariable int storeId,
             @RequestHeader("X-User-Id") int userId,
             @RequestBody OrderRequest orderRequest
     ) {
-        List<OrderResponse> orderResponse = orderService.createOrder(storeId, userId, orderRequest);
+        List<OrderResponse> orderResponse = orderService.createOrder(userId, orderRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
+
+    // 가게별 주문 전체 내역 조회
+//    @GetMapping("/{storeId}")
+//    public ResponseEntity<List<OrderResponse>> getOrderByStoreId(
+//            @RequestHeader("X-User-Id") int userId,
+//            @PathVariable int storeId) {
+//        OrderResponse orderResponse = orderService.getOrderByStoreId(storeId);
+//        if (orderResponse != null) {
+//            return ResponseEntity.ok(orderResponse);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+
+//    // 주문 건 별 상세 내역 조회
+//    @GetMapping("/{orderCode}")
+//    public ResponseEntity<OrderResponse> getOrderDetails(
+//            @PathVariable int orderCode,
+//            @RequestHeader("X-User-Id") int userId) {
+//        OrderResponse orderResponse = orderService.getOrderDetails(orderCode, userId);
+//        return ResponseEntity.ok(orderResponse);
+//    }
+
 
 
 }

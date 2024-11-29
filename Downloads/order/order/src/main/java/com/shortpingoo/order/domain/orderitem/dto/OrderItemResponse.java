@@ -14,6 +14,8 @@ public class OrderItemResponse {
 
     private int orderCode;
 
+    private int storeId;
+
     private int productCode;
 
     private int amount;

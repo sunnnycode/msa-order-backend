@@ -1,5 +1,6 @@
 package com.shortpingoo.order.domain.order.dto;
 
+import com.shortpingoo.order.domain.orderitem.dto.OrderItemResponse;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,6 +9,7 @@ import lombok.*;
 import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,10 +23,10 @@ public class OrderResponse {
 
     private int userId;
 
-    private int storeId;
-
     private int status;
 
     private LocalDateTime orderDate;
+
+    //private List<OrderItemResponse> orderItems;
 
 }
