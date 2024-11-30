@@ -27,6 +27,12 @@ public class OrderResponse {
 
     private LocalDateTime orderDate;
 
+    private String name;
+
+    private String thumbnail;
+
+    private int price;
+
     //private List<OrderItemResponse> orderItems;
 
 }

@@ -22,13 +22,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/v3/api-docs/**"
     );
 
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*") // 허용할 헤더
-                .allowCredentials(true);
-    }
+//
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:3000")
+//                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                .allowedHeaders("*") // 허용할 헤더
+//                .allowCredentials(true);
+//    }
 }

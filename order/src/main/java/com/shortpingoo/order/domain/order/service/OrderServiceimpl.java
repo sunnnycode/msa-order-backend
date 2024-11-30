@@ -74,7 +74,8 @@ public class OrderServiceimpl implements OrderService {
 
 //     //가게별 주문 전체 내역 조회
 //    @Override
-//    public List<OrderResponse> getOrderByStoreId(int storeId, int userId) {
+//    @Transactional
+//    public List<OrderAllResponse> getOrderByStoreId(int storeId, int userId) {
 //        List<OrderItem> orderItems = orderItemRepository.findByStoreId(storeId);
 //
 //        // 상품이 없으면 빈 리스트 반환

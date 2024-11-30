@@ -13,6 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderRequest {
 
+    private String name;
+
+    private String thumbnail;
+
+    private int price;
+
     private List<OrderItemRequest> orderItemList;  // List<OrderItemRequest> 타입으로 정의
 }
 
