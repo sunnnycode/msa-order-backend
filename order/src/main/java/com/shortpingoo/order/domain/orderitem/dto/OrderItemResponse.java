@@ -14,8 +14,6 @@ public class OrderItemResponse {
 
     private int orderCode;
 
-    private int storeId;
-
     private int productCode;
 
     private int amount;
@@ -25,5 +23,11 @@ public class OrderItemResponse {
     private String clothesSize;
 
     private String shoesSize;
+
+    private String name;
+
+    private String thumbnail;
+
+    private int price;
 
 }

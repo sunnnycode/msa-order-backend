@@ -21,4 +21,10 @@ public class OrderItemRequest {
     private String clothesSize;
 
     private String shoesSize;
+
+    private String name;
+
+    private String thumbnail;
+
+    private int price;
 }

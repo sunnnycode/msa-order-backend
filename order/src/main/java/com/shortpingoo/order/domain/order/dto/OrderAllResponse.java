@@ -25,10 +25,5 @@ public class OrderAllResponse {
 
     private LocalDateTime orderDate;
 
-    private String name;
-
-    private String thumbnail;
-
-    private int price;
 
 }

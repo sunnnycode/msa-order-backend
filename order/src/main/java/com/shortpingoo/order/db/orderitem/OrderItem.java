@@ -37,4 +37,14 @@ public class OrderItem {
     @Column(name = "color", length = 20, nullable = false)
     private String color;
 
+    //productName
+    @Column(name = "name", length = 50, nullable = false)
+    private String name;
+
+    @Column(name = "thumbnail", length = 300)
+    private String thumbnail;
+
+    @Column(name = "price", nullable = false)
+    private int price;
+
 }
