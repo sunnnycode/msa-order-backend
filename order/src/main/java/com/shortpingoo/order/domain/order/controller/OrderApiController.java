@@ -29,15 +29,15 @@ public class OrderApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 
-//    // 가게별 주문 전체 내역 조회
-//    @GetMapping("/owner")
-//    public ResponseEntity<List<OrderResponse>> getOrderByStoreId(
-//            @PathVariable("storeId") int storeId,
-//            @RequestHeader("X-User-Id") int userId) {
-//
-//        List<OrderAllResponse> orderAllResponses = orderService.getOrderByStoreId(storeId, userId);
-//        return ResponseEntity.ok(orderAllResponses);
-//    }
+    // 가게별 주문 전체 내역 조회
+    @GetMapping("/owner")
+    public ResponseEntity<List<OrderResponse>> getOrderByStoreId(
+            @PathVariable("storeId") int storeId,
+            @RequestHeader("X-User-Id") int userId) {
+
+        List<OrderAllResponse> orderAllResponses = orderService.getOrderByStoreId(storeId, userId);
+        return ResponseEntity.ok(orderAllResponses);
+    }
 
 
     // 사용자(Client)의 본인 주문 전체 내역 조회
