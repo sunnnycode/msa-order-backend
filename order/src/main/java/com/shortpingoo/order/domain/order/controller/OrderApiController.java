@@ -4,12 +4,15 @@ import com.shortpingoo.order.domain.order.dto.OrderAllResponse;
 import com.shortpingoo.order.domain.order.dto.OrderRequest;
 import com.shortpingoo.order.domain.order.dto.OrderResponse;
 import com.shortpingoo.order.domain.order.service.OrderService;
+import com.shortpingoo.order.domain.orderitem.dto.OrderItemResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,15 +32,19 @@ public class OrderApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 
-//    // 가게별 주문 전체 내역 조회
-//    @GetMapping("/owner")
-//    public ResponseEntity<List<OrderResponse>> getOrderByStoreId(
-//            @PathVariable("storeId") int storeId,
-//            @RequestHeader("X-User-Id") int userId) {
-//
-//        List<OrderAllResponse> orderAllResponses = orderService.getOrderByStoreId(storeId, userId);
-//        return ResponseEntity.ok(orderAllResponses);
-//    }
+    // 가게별 주문 전체 내역 조회 (사용자 - owner)
+    @GetMapping("/owner")
+    public ResponseEntity<List<OrderAllResponse>> getOrdersByOwner(
+            @RequestHeader("X-User-Id") int userId) {
+
+        List<OrderAllResponse> orderAllResponses = orderService.getOrdersByOwner(userId);
+
+        if (!orderAllResponses.isEmpty()) {
+            return ResponseEntity.ok(orderAllResponses);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
     // 사용자(Client)의 본인 주문 전체 내역 조회
