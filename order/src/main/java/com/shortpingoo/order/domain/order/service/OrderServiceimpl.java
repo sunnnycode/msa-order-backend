@@ -123,7 +123,7 @@ public class OrderServiceimpl implements OrderService {
         List<Map<String, Object>> products;
         try {
             ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
-                    "/api/brand/product/owner", // Gateway로 라우팅된 엔드포인트
+                    "https://shortpingoo.shop/api/brand/product/owner", // Gateway로 라우팅된 엔드포인트
                     HttpMethod.GET,
                     entity,
                     new ParameterizedTypeReference<List<Map<String, Object>>>() {}
