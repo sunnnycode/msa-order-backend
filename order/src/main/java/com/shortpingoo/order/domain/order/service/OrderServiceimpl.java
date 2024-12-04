@@ -176,6 +176,8 @@ public class OrderServiceimpl implements OrderService {
                     entity,
                     List.class
             );
+            System.out.println("/////fetchProductsByOwner/////");
+            System.out.println(response.getBody());
             return response.getBody();
         } catch (Exception e) {
             System.err.println("Brand API 호출 실패: " + e.getMessage());
