@@ -89,8 +89,8 @@ public class OrderServiceimpl implements OrderService {
 
             // HTTP PATCH 요청 보내기
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            //headers.set("Authorization", "X-User-Id"); // JWT 토큰 추가
+            //headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "X-User-Id"); // JWT 토큰 추가
             HttpEntity<StockUpdateRequest> requestEntity = new HttpEntity<>(stockUpdateRequest);
 
             // PATCH 요청 보내기
