@@ -89,7 +89,7 @@ public class OrderServiceimpl implements OrderService {
 
             // HTTP PATCH 요청 보내기
             HttpHeaders headers = new HttpHeaders();
-            //headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "X-User-Id"); // JWT 토큰 추가
             HttpEntity<StockUpdateRequest> requestEntity = new HttpEntity<>(stockUpdateRequest);
 
@@ -168,6 +168,7 @@ public class OrderServiceimpl implements OrderService {
         System.out.println("/////ownerId/////");
         System.out.println(ownerId);
         // HttpEntity에 헤더 추가
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON)); // JSON 형식 응답 기대
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         System.out.println("/////entity/////");
         System.out.println(entity);
