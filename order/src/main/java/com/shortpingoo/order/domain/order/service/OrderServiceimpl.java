@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +90,7 @@ public class OrderServiceimpl implements OrderService {
 
             // HTTP PATCH 요청 보내기
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+            //headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "X-User-Id"); // JWT 토큰 추가
             HttpEntity<StockUpdateRequest> requestEntity = new HttpEntity<>(stockUpdateRequest);
 
@@ -113,10 +114,28 @@ public class OrderServiceimpl implements OrderService {
     @Override
     @Transactional
     public List<OrderAllResponse> getOrdersByOwner(int userId) {
-        // 사용자 소유 상품 조회 (Brand API 호출)
-        List<Map<String, Object>> products = fetchProductsByOwner(userId);
+        // 헤더에 X-User-Id 추가
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-User-Id", String.valueOf(userId)); // 사용자 ID를 헤더로 설정
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        if (products.isEmpty()) {
+        // API Gateway를 통해 상품 목록 가져오기
+        List<Map<String, Object>> products;
+        try {
+            ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
+                    "/api/brand/product/owner", // Gateway로 라우팅된 엔드포인트
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+            );
+
+            products = response.getBody(); // 응답 데이터
+        } catch (Exception e) {
+            System.err.println("Brand API 호출 실패: " + e.getMessage());
+            return Collections.emptyList();
+        }
+
+        if (products == null || products.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -125,29 +144,24 @@ public class OrderServiceimpl implements OrderService {
                 .map(product -> String.valueOf(product.get("code")))
                 .collect(Collectors.toList());
 
-        // 상품 코드에 해당하는 OrderItem들을 조회
+        // 상품 코드에 해당하는 OrderItem 조회
         List<OrderItem> orderItems = orderItemRepository.findByProductCodeIn(productCodes);
 
-        // OrderItem을 기반으로 해당 Order를 조회
+        // OrderItem을 기반으로 Order 데이터 조회 및 변환
         List<Order> orders = orderItems.stream()
                 .map(OrderItem::getOrder)
                 .distinct()
                 .collect(Collectors.toList());
 
-        // 주문 데이터를 OrderAllResponse로 변환
         return orders.stream()
                 .map(order -> {
-                    // 현재 Order에 연관된 OrderItem들을 조회
                     List<OrderItem> relatedOrderItems = orderItemRepository.findByOrder(order);
-
-                    // OrderItem들을 OrderItemResponse로 변환
                     List<OrderItemResponse> orderItemResponses = relatedOrderItems.stream()
-                            .map(orderItem -> modelMapper.map(orderItem, OrderItemResponse.class))
+                            .map(item -> modelMapper.map(item, OrderItemResponse.class))
                             .collect(Collectors.toList());
 
-                    // OrderAllResponse 생성
                     return OrderAllResponse.builder()
-                            .code(order.getCode()) // 주문 코드
+                            .code(order.getCode())
                             .userId(order.getUserId())
                             .status(order.getStatus())
                             .orderDate(order.getOrderDate())
@@ -157,38 +171,39 @@ public class OrderServiceimpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
-    private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
-        String url = brandApiUrl;
-        System.out.println("/////brandApiUrl/////");
-        System.out.println(brandApiUrl);
-        // 요청 헤더 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-Id", String.valueOf(ownerId)); // 헤더에 ownerId 추가
-        System.out.println("/////ownerId/////");
-        System.out.println(ownerId);
-        // HttpEntity에 헤더 추가
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-        System.out.println("/////entity/////");
-        System.out.println(entity);
-        try {
-            System.out.println("/////response start/////");
 
-            // GET 요청에 헤더 포함
-            ResponseEntity<List> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    entity,
-                    List.class
-            );
-            System.out.println("/////fetchProductsByOwner/////");
-            System.out.println(response.getBody());
-            return response.getBody();
-        } catch (Exception e) {
-            System.err.println("Brand API 호출 실패: " + e.getMessage());
-            return Collections.emptyList();
-        }
-    }
+//    // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
+//    private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
+//        String url = brandApiUrl;
+//        System.out.println("/////brandApiUrl/////");
+//        System.out.println(brandApiUrl);
+//        // 요청 헤더 생성
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("X-User-Id", String.valueOf(ownerId)); // 헤더에 ownerId 추가
+//        System.out.println("/////ownerId/////");
+//        System.out.println(ownerId);
+//        // HttpEntity에 헤더 추가
+//        HttpEntity<Void> entity = new HttpEntity<>(headers);
+//        System.out.println("/////entity/////");
+//        System.out.println(entity);
+//        try {
+//            System.out.println("/////response start/////");
+//
+//            // GET 요청에 헤더 포함
+//            ResponseEntity<List> response = restTemplate.exchange(
+//                    url,
+//                    HttpMethod.GET,
+//                    entity,
+//                    List.class
+//            );
+//            System.out.println("/////fetchProductsByOwner/////");
+//            System.out.println(response.getBody());
+//            return response.getBody();
+//        } catch (Exception e) {
+//            System.err.println("Brand API 호출 실패: " + e.getMessage());
+//            return Collections.emptyList();
+//        }
+//    }
 
     // 사용자(Client)의 본인 주문 전체 내역 조회
     @Override
