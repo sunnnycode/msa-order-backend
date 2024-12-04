@@ -43,8 +43,11 @@ public class OrderServiceimpl implements OrderService {
         this.restTemplate = restTemplate;
     }
 
-    //@Value("${brand.api.url}")
-    private String brandApiUrl="http://localhost:8081/api/brand";
+    @Value("${brand.api.url}")
+    private String brandApiUrl;
+
+    @Value("${stock.api.url}")
+    private String stockApiUrl;
 
     // 주문 생성
     @Transactional
@@ -71,7 +74,7 @@ public class OrderServiceimpl implements OrderService {
             int orderStock = itemRequest.getStock(); // 주문 수량
 
             // 재고 조회 API 호출 (현재 재고 조회)
-            int currentStock = restTemplate.getForObject("http://localhost:8089/open-api/brand/product/stock/{productCode}", Integer.class, productCode);
+            int currentStock = restTemplate.getForObject(stockApiUrl + "/{productCode}", Integer.class, productCode);
 
             // 재고가 부족한 경우 예외 처리
             if (currentStock < orderStock) {
@@ -91,7 +94,7 @@ public class OrderServiceimpl implements OrderService {
             HttpEntity<StockUpdateRequest> requestEntity = new HttpEntity<>(stockUpdateRequest);
 
             // PATCH 요청 보내기
-            restTemplate.exchange("http://localhost:8089/open-api/brand/product/stock/{productCode}",
+            restTemplate.exchange(stockApiUrl + "/{productCode}",
                     HttpMethod.PATCH, requestEntity, Void.class, productCode);
 
             // OrderItem 기반 OrderResponse 생성
@@ -105,10 +108,6 @@ public class OrderServiceimpl implements OrderService {
 
         return orderResponses;
     }
-
-
-
-
 
     // 가게별 주문 전체 내역 조회
     @Override
@@ -158,8 +157,6 @@ public class OrderServiceimpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-
-
     // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
     private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
         String url = brandApiUrl + "/product/owner";
@@ -186,9 +183,6 @@ public class OrderServiceimpl implements OrderService {
         }
     }
 
-
-
-
     // 사용자(Client)의 본인 주문 전체 내역 조회
     @Override
     public List<OrderAllResponse> getOrderDetails(int userId) {
@@ -211,12 +205,4 @@ public class OrderServiceimpl implements OrderService {
                     .build();
         }).collect(Collectors.toList());
     }
-
-
-
-
-
-
 }
-
-
