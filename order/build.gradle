@@ -43,9 +43,11 @@ dependencies {
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'	//Swagger
 
-	// 여기 의존성(gateway, eureka-client) 추가
+	// 게이트웨이
 	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
-	//implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.4'
+	implementation 'org.apache.httpcomponents.core5:httpcore5:5.4'
 
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 }
