@@ -36,7 +36,6 @@ phases:
       - test -f build/libs/*.jar || { echo "JAR file not found"; exit 1; }
       - cp build/libs/order-0.0.1-SNAPSHOT.jar app.jar  # Dockerfile에서 사용하기 위해 app.jar로 복사
       - echo "Docker build 시작"
-      - cd order
       - echo Building the Docker image...
       - docker build -t $BACKEND_ECR_REPO:$IMAGE_TAG .
       - docker tag $BACKEND_ECR_REPO:$IMAGE_TAG $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG
