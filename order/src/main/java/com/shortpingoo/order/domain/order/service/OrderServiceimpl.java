@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,7 +115,7 @@ public class OrderServiceimpl implements OrderService {
     @Transactional
     public List<OrderAllResponse> getOrdersByOwner(int userId) {
         // 사용자 소유 상품 조회 (Brand API 호출)
-        List<Map<String, Object>> products = fetchProductsByOwner(userId);
+        List<Object> products = fetchProductsByOwner(userId);
 
         if (products.isEmpty()) {
             return Collections.emptyList();
@@ -122,7 +123,8 @@ public class OrderServiceimpl implements OrderService {
 
         // 상품 코드 추출
         List<String> productCodes = products.stream()
-                .map(product -> String.valueOf(product.get("code")))
+                .filter(product -> product instanceof Map)
+                .map(product -> String.valueOf(((Map<String, Object>) product).get("code")))
                 .collect(Collectors.toList());
 
         // 상품 코드에 해당하는 OrderItem들을 조회
@@ -157,30 +159,32 @@ public class OrderServiceimpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
+
     // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
-    private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
+    private List<Object> fetchProductsByOwner(int ownerId) {
         String url = brandApiUrl;
         System.out.println("/////brandApiUrl/////");
         System.out.println(brandApiUrl);
+
         // 요청 헤더 생성
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-User-Id", String.valueOf(ownerId)); // 헤더에 ownerId 추가
-        System.out.println("/////ownerId/////");
-        System.out.println(ownerId);
-        // HttpEntity에 헤더 추가
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON)); // JSON 형식 응답 기대
+
+        // HttpEntity에 헤더 추가
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         System.out.println("/////entity/////");
         System.out.println(entity);
+
         try {
             System.out.println("/////response start/////");
 
             // GET 요청에 헤더 포함
-            ResponseEntity<List> response = restTemplate.exchange(
+            ResponseEntity<List<Object>> response = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
                     entity,
-                    List.class
+                    new ParameterizedTypeReference<List<Object>>() {} // 응답 타입을 Object로 설정
             );
             System.out.println("/////fetchProductsByOwner/////");
             System.out.println(response.getBody());
