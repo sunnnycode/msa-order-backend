@@ -9,14 +9,12 @@ import com.shortpingoo.order.domain.order.dto.OrderRequest;
 import com.shortpingoo.order.domain.order.dto.OrderResponse;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemRequest;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemResponse;
+import com.shortpingoo.order.domain.orderitem.dto.StockUpdateRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,10 +66,37 @@ public class OrderServiceimpl implements OrderService {
             orderItem.setOrder(order); // Order와 연관 설정
             orderItemRepository.save(orderItem);
 
+            // 상품 재고 조회
+            int productCode = itemRequest.getProductCode(); // 상품 코드
+            int orderStock = itemRequest.getStock(); // 주문 수량
+
+            // 재고 조회 API 호출 (현재 재고 조회)
+            int currentStock = restTemplate.getForObject("http://localhost:8089/open-api/brand/product/stock/{productCode}", Integer.class, productCode);
+
+            // 재고가 부족한 경우 예외 처리
+            if (currentStock < orderStock) {
+                throw new RuntimeException("재고가 부족합니다. 상품 코드: " + productCode);
+            }
+
+            // 재고 감소 (주문 수량만큼)
+            int updatedStock = currentStock - orderStock;
+
+            // 재고 업데이트 요청 (PATCH로 수정)
+            StockUpdateRequest stockUpdateRequest = new StockUpdateRequest(updatedStock); // 감소된 재고
+
+            // HTTP PATCH 요청 보내기
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            //headers.set("Authorization", "X-User-Id"); // JWT 토큰 추가
+            HttpEntity<StockUpdateRequest> requestEntity = new HttpEntity<>(stockUpdateRequest);
+
+            // PATCH 요청 보내기
+            restTemplate.exchange("http://localhost:8089/open-api/brand/product/stock/{productCode}",
+                    HttpMethod.PATCH, requestEntity, Void.class, productCode);
+
             // OrderItem 기반 OrderResponse 생성
             OrderResponse orderResponse = modelMapper.map(orderItem, OrderResponse.class);
             orderResponse.setCode(order.getCode());
-            //orderResponse.setStoreId(storeId);
             orderResponse.setUserId(userId);
             orderResponse.setStatus(order.getStatus());
 
@@ -80,6 +105,10 @@ public class OrderServiceimpl implements OrderService {
 
         return orderResponses;
     }
+
+
+
+
 
     // 가게별 주문 전체 내역 조회
     @Override

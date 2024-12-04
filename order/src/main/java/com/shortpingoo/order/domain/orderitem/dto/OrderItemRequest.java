@@ -16,7 +16,7 @@ public class OrderItemRequest {
     //테스트용
     private int productCode;
 
-    private int amount;
+    private int stock;
 
     private String color;
 

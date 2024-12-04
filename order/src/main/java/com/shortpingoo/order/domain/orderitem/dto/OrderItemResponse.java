@@ -16,7 +16,7 @@ public class OrderItemResponse {
 
     private int productCode;
 
-    private int amount;
+    private int stock;
 
     private String color;
 
