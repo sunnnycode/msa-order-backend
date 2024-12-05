@@ -178,7 +178,7 @@ public class OrderServiceimpl implements OrderService {
             ResponseEntity<List> response = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
-                    entity,
+                    null,
                     List.class
             );
             System.out.println("/////fetchProductsByOwner/////");
