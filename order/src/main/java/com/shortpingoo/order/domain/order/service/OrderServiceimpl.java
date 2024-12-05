@@ -159,9 +159,10 @@ public class OrderServiceimpl implements OrderService {
 
     // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
     private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
-        String url = brandApiUrl;
+        String url = brandApiUrl + "/api/brand/product/ownerRest";
         System.out.println("/////brandApiUrl/////");
         System.out.println(brandApiUrl);
+        System.out.println(url);
         // 요청 헤더 생성
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-User-Id", String.valueOf(ownerId)); // 헤더에 ownerId 추가
@@ -178,7 +179,7 @@ public class OrderServiceimpl implements OrderService {
             ResponseEntity<List> response = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
-                    null,
+                    entity,
                     List.class
             );
             System.out.println("/////fetchProductsByOwner/////");
