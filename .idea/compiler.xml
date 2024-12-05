@@ -10,5 +10,6 @@
         <module name="order.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel target="21" />
   </component>
 </project>

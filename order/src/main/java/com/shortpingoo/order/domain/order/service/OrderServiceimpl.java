@@ -159,16 +159,21 @@ public class OrderServiceimpl implements OrderService {
 
     // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
     private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
-        String url = brandApiUrl + "/product/owner";
-
+        String url = brandApiUrl;
+        System.out.println("/////brandApiUrl/////");
+        System.out.println(brandApiUrl);
         // 요청 헤더 생성
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-User-Id", String.valueOf(ownerId)); // 헤더에 ownerId 추가
-
+        System.out.println("/////ownerId/////");
+        System.out.println(ownerId);
         // HttpEntity에 헤더 추가
         HttpEntity<Void> entity = new HttpEntity<>(headers);
-
+        System.out.println("/////entity/////");
+        System.out.println(entity);
         try {
+            System.out.println("/////response start/////");
+
             // GET 요청에 헤더 포함
             ResponseEntity<List> response = restTemplate.exchange(
                     url,
@@ -176,6 +181,8 @@ public class OrderServiceimpl implements OrderService {
                     entity,
                     List.class
             );
+            System.out.println("/////fetchProductsByOwner/////");
+            System.out.println(response.getBody());
             return response.getBody();
         } catch (Exception e) {
             System.err.println("Brand API 호출 실패: " + e.getMessage());
