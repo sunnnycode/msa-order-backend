@@ -159,7 +159,7 @@ public class OrderServiceimpl implements OrderService {
 
     // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
     private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
-        String url = brandApiUrl + "/api/brand/product/ownerRest";
+        String url = brandApiUrl + "Rest";
         System.out.println("/////brandApiUrl/////");
         System.out.println(brandApiUrl);
         System.out.println(url);
