@@ -7,6 +7,7 @@ import com.shortpingoo.order.db.orderitem.OrderItemRepository;
 import com.shortpingoo.order.domain.order.dto.OrderAllResponse;
 import com.shortpingoo.order.domain.order.dto.OrderRequest;
 import com.shortpingoo.order.domain.order.dto.OrderResponse;
+import com.shortpingoo.order.domain.order.dto.StatusRequest;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemRequest;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemResponse;
 import com.shortpingoo.order.domain.orderitem.dto.StockUpdateRequest;
@@ -211,5 +212,23 @@ public class OrderServiceimpl implements OrderService {
                     .orderItems(orderItemResponses)
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    // 사용자(owner)의 주문 상태 변경
+    @Override
+    public OrderResponse updateOrderStatus(int orderCode, int userId, StatusRequest statusRequest) {
+        Optional<Order> optionalOrder = orderRepository.findByCode(orderCode);
+
+        if (!optionalOrder.isPresent()) {
+            throw new RuntimeException("Order not found with code " + orderCode);
+        }
+
+        Order order = optionalOrder.get();
+
+        order.setStatus(statusRequest.getStatus());
+        Order updatedOrder = orderRepository.save(order);
+        OrderResponse orderResponse = modelMapper.map(updatedOrder, OrderResponse.class);
+
+        return orderResponse;
     }
 }
