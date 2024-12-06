@@ -3,6 +3,7 @@ package com.shortpingoo.order.domain.order.controller;
 import com.shortpingoo.order.domain.order.dto.OrderAllResponse;
 import com.shortpingoo.order.domain.order.dto.OrderRequest;
 import com.shortpingoo.order.domain.order.dto.OrderResponse;
+import com.shortpingoo.order.domain.order.dto.StatusRequest;
 import com.shortpingoo.order.domain.order.service.OrderService;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemResponse;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,18 @@ public class OrderApiController {
             @RequestHeader("X-User-Id") int userId) {
         List<OrderAllResponse> orderAllResponse = orderService.getOrderDetails(userId);
         return ResponseEntity.ok(orderAllResponse);
+    }
+
+    // 사용자(owner)의 주문 상태 변경
+    @PatchMapping("/owner/{orderCode}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus (
+            @PathVariable("orderCode") int orderCode,
+            @RequestBody StatusRequest statusRequest,
+            @RequestHeader("X-User-Id") int userId
+
+    ) {
+        OrderResponse orderResponse = orderService.updateOrderStatus(orderCode, userId, statusRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 
 
