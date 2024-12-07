@@ -25,7 +25,7 @@ public class Order {
     @Column(name = "store_id", nullable = false)
     private int storeId;
 
-    @Column(name = "imp_uid", nullable = false)
+    @Column(name = "imp_uid", nullable = true)
     private String impUid;
 
     @Column(name = "status", nullable = false)
