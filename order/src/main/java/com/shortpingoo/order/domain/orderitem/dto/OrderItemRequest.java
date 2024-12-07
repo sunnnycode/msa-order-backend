@@ -20,9 +20,7 @@ public class OrderItemRequest {
 
     private String color;
 
-    private String clothesSize;
-
-    private String shoesSize;
+    private String size;
 
     private String name;
 
