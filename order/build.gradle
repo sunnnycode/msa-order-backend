@@ -52,6 +52,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6' // JSON 처리용
+
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 }
 
 dependencyManagement {
@@ -63,3 +65,9 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+repositories {
+	mavenCentral()  // 기본 중앙 레포지토리
+	maven { url 'https://jitpack.io' }  // Jitpack 레포지토리 추가
+}
+
