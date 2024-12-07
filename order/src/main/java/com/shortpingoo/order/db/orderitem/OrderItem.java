@@ -30,11 +30,8 @@ public class OrderItem {
     @Column(name = "stock", nullable = false)
     private int stock;
 
-    @Column(name = "clothes_size", length = 20)
-    private String clothesSize;
-
-    @Column(name = "shoes_size", length = 20)
-    private String shoesSize;
+    @Column(name = "size", length = 20)
+    private String size;
 
     @Column(name = "color", length = 20, nullable = false)
     private String color;
