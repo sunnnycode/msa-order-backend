@@ -23,6 +23,8 @@ public class OrderResponse {
 
     private int userId;
 
+    private String impUid;
+
     private int status;
 
     private LocalDateTime orderDate;

@@ -1,5 +1,6 @@
 package com.shortpingoo.order.domain.pay.controller;
 
+import com.shortpingoo.order.domain.order.dto.OrderRequest;
 import com.shortpingoo.order.domain.pay.service.PayService;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;

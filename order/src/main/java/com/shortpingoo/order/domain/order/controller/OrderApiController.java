@@ -6,11 +6,13 @@ import com.shortpingoo.order.domain.order.dto.OrderResponse;
 import com.shortpingoo.order.domain.order.dto.StatusRequest;
 import com.shortpingoo.order.domain.order.service.OrderService;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemResponse;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +30,9 @@ public class OrderApiController {
     public ResponseEntity<List<OrderResponse>> createOrder(
             @RequestHeader("X-User-Id") int userId,
             @RequestBody OrderRequest orderRequest
-    ) {
-        List<OrderResponse> orderResponse = orderService.createOrder(userId, orderRequest);
+    ) throws IamportResponseException, IOException {
+        String impUid = orderRequest.getImpUid();
+        List<OrderResponse> orderResponse = orderService.createOrder(userId, orderRequest, impUid);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 

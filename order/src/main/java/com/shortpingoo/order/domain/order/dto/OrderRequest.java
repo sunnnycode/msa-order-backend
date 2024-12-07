@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderRequest {
 
+    private String impUid;
 
     private List<OrderItemRequest> orderItemList;  // List<OrderItemRequest> 타입으로 정의
 }

@@ -60,16 +60,6 @@ public class PayServiceImpl implements PayService {
         pay.setUserId(userId);
         payRepository.save(pay);
 
-//        List<Order> orders = orderRepository.findByUserId(userId);
-//        for (Order order : orders) {
-//            List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
-//            for (OrderItem orderItem : orderItems) {
-//                // TODO 결제 정보 저장
-//                orderItem.setOrder(order);
-//                orderItemRepository.save(orderItem);
-//            }
-//        }
-
         return response;
     }
 }
