@@ -11,6 +11,10 @@ import com.shortpingoo.order.domain.order.dto.StatusRequest;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemRequest;
 import com.shortpingoo.order.domain.orderitem.dto.OrderItemResponse;
 import com.shortpingoo.order.domain.orderitem.dto.StockUpdateRequest;
+import com.shortpingoo.order.domain.pay.service.PayService;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,14 +39,17 @@ public class OrderServiceimpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
+    private final PayService payService;
 
     @Autowired
     public OrderServiceimpl(OrderRepository orderRepository, ModelMapper modelMapper,
-                            OrderItemRepository orderItemRepository, RestTemplate restTemplate) {
+                            OrderItemRepository orderItemRepository, RestTemplate restTemplate,
+                            PayService payService) {
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
         this.orderItemRepository = orderItemRepository;
         this.restTemplate = restTemplate;
+        this.payService = payService;
     }
 
     @Value("${brand.api.url}")
@@ -53,14 +61,22 @@ public class OrderServiceimpl implements OrderService {
     // 주문 생성
     @Transactional
     @Override
-    public List<OrderResponse> createOrder(int userId, OrderRequest orderRequest) {
+    public List<OrderResponse> createOrder(int userId, OrderRequest orderRequest, String impUid)
+            throws IamportResponseException, IOException  {
         // 주문 데이터 저장
         Order order = modelMapper.map(orderRequest, Order.class);
         order.setUserId(userId);
-        order.setStatus(0); // 초기 상태 (예: PENDING)
-        order.setOrderDate(LocalDateTime.now()); // 주문 날짜 설정
+        order.setOrderDate(LocalDateTime.now());
 
-        // Order 저장
+        // 결제 확인
+        IamportResponse<Payment> payResponse = payService.verifyAndSavePayment(userId, impUid); // 결제 확인
+
+        if (payResponse == null ) {
+            throw new RuntimeException("결제 실패");
+        }
+
+        // 주문 저장
+        order.setStatus(1); // 주문 완료 상태
         orderRepository.save(order);
 
         // OrderItem 저장 및 응답 생성
@@ -86,12 +102,12 @@ public class OrderServiceimpl implements OrderService {
             int updatedStock = currentStock - orderStock;
 
             // 재고 업데이트 요청 (PATCH로 수정)
-            StockUpdateRequest stockUpdateRequest = new StockUpdateRequest(updatedStock); // 감소된 재고
+            StockUpdateRequest stockUpdateRequest = new StockUpdateRequest(updatedStock);
 
             // HTTP PATCH 요청 보내기
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            //headers.set("Authorization", "X-User-Id"); // JWT 토큰 추가
+            headers.set("Authorization", "X-User-Id"); // JWT 토큰 추가
             HttpEntity<StockUpdateRequest> requestEntity = new HttpEntity<>(stockUpdateRequest);
 
             // PATCH 요청 보내기
@@ -160,7 +176,7 @@ public class OrderServiceimpl implements OrderService {
 
     // 사용자(owner)의 상품 목록을 Brand API로 조회 (헤더 사용)
     private List<Map<String, Object>> fetchProductsByOwner(int ownerId) {
-        String url = brandApiUrl;
+        String url = brandApiUrl + "Rest";
         System.out.println("/////brandApiUrl/////");
         System.out.println(brandApiUrl);
         // 요청 헤더 생성

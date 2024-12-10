@@ -19,6 +19,8 @@ public class OrderAllResponse {
 
     private int userId;
 
+    private String impUid;
+
     private List<OrderItemResponse> orderItems;
 
     private int status;
